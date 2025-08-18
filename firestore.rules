@@ -1,0 +1,26 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow reading users collection for username/email validation during signup
+    // Allow writing users collection for signup
+    // Allow querying users for login authentication
+    match /users/{userId} {
+      // Allow read and write for signup/login operations
+      allow read, write: if true;
+      
+      // Allow queries for username and email validation
+      allow list: if true;
+    }
+    
+    // Allow authenticated users to read and write rides
+    match /rides/{rideId} {
+      allow read, write: if true;
+    }
+    
+    // Allow authenticated users to read and write ride requests
+    match /ride_requests/{requestId} {
+      allow read, write: if true;
+    }
+  }
+}

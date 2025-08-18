@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "631641346172",
+    "project_id": "skoro-17721",
+    "storage_bucket": "skoro-17721.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:631641346172:android:3e06475b6424efa5ebf9f9",
+        "android_client_info": {
+          "package_name": "com.harikiruthik.skoro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByeqI4w-JImk8QL16xlaLzaN8jAuQ3oZU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

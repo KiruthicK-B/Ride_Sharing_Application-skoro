@@ -1,0 +1,28 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "skoro-17721",
+          "appId": "1:631641346172:android:3e06475b6424efa5ebf9f9",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "skoro-17721",
+          "configurations": {
+            "android": "1:631641346172:android:3e06475b6424efa5ebf9f9",
+            "ios": "1:631641346172:ios:3c23738f809c30eaebf9f9",
+            "macos": "1:631641346172:ios:3c23738f809c30eaebf9f9",
+            "web": "1:631641346172:web:55242e76359fc435ebf9f9",
+            "windows": "1:631641346172:web:ad88dafd3dda4146ebf9f9"
+          }
+        }
+      }
+    }
+  }
+}
