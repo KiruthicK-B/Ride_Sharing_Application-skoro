@@ -6,7 +6,8 @@ enum RideStatus {
   driverArriving,
   inProgress,
   completed,
-  cancelled, arrived,
+  cancelled,
+  arrived,
 }
 
 enum VehicleType { car, auto, van }
@@ -34,6 +35,8 @@ class RideModel {
   final String? cancelledBy;
   final double? rating;
   final String? feedback;
+  final LatLng? driverLocation;
+  final DateTime? lastLocationUpdate;
 
   RideModel({
     required this.id,
@@ -58,6 +61,8 @@ class RideModel {
     this.cancelledBy,
     this.rating,
     this.feedback,
+    this.driverLocation,
+    this.lastLocationUpdate,
   });
 
   factory RideModel.fromJson(Map<String, dynamic> json) {
@@ -91,19 +96,31 @@ class RideModel {
       requestedAt: DateTime.parse(
         json['requestedAt'] ?? DateTime.now().toIso8601String(),
       ),
-      acceptedAt: json['acceptedAt'] != null
-          ? DateTime.parse(json['acceptedAt'])
-          : null,
-      startedAt: json['startedAt'] != null
-          ? DateTime.parse(json['startedAt'])
-          : null,
-      completedAt: json['completedAt'] != null
-          ? DateTime.parse(json['completedAt'])
-          : null,
+      acceptedAt:
+          json['acceptedAt'] != null
+              ? DateTime.parse(json['acceptedAt'])
+              : null,
+      startedAt:
+          json['startedAt'] != null ? DateTime.parse(json['startedAt']) : null,
+      completedAt:
+          json['completedAt'] != null
+              ? DateTime.parse(json['completedAt'])
+              : null,
       cancellationReason: json['cancellationReason'],
       cancelledBy: json['cancelledBy'],
       rating: json['rating']?.toDouble(),
       feedback: json['feedback'],
+      driverLocation:
+          json['driverLocation'] != null
+              ? LatLng(
+                json['driverLocation']['latitude'] ?? 0.0,
+                json['driverLocation']['longitude'] ?? 0.0,
+              )
+              : null,
+      lastLocationUpdate:
+          json['lastLocationUpdate'] != null
+              ? DateTime.parse(json['lastLocationUpdate'])
+              : null,
     );
   }
 
@@ -137,6 +154,14 @@ class RideModel {
       'cancelledBy': cancelledBy,
       'rating': rating,
       'feedback': feedback,
+      'driverLocation':
+          driverLocation != null
+              ? {
+                'latitude': driverLocation!.latitude,
+                'longitude': driverLocation!.longitude,
+              }
+              : null,
+      'lastLocationUpdate': lastLocationUpdate?.toIso8601String(),
     };
   }
 
@@ -163,6 +188,8 @@ class RideModel {
     String? cancelledBy,
     double? rating,
     String? feedback,
+    LatLng? driverLocation,
+    DateTime? lastLocationUpdate,
   }) {
     return RideModel(
       id: id ?? this.id,
@@ -187,6 +214,8 @@ class RideModel {
       cancelledBy: cancelledBy ?? this.cancelledBy,
       rating: rating ?? this.rating,
       feedback: feedback ?? this.feedback,
+      driverLocation: driverLocation ?? this.driverLocation,
+      lastLocationUpdate: lastLocationUpdate ?? this.lastLocationUpdate,
     );
   }
 }

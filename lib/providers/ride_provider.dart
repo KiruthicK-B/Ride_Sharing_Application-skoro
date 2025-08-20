@@ -192,14 +192,16 @@ class RideProvider extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      final snapshot = await _firestore
-          .collection('rides')
-          .where('riderId', isEqualTo: riderId)
-          .get();
+      final snapshot =
+          await _firestore
+              .collection('rides')
+              .where('riderId', isEqualTo: riderId)
+              .get();
 
-      _riderRides = snapshot.docs
-          .map((doc) => RideModel.fromJson({'id': doc.id, ...doc.data()}))
-          .toList();
+      _riderRides =
+          snapshot.docs
+              .map((doc) => RideModel.fromJson({'id': doc.id, ...doc.data()}))
+              .toList();
 
       // Sort by requestedAt in memory (most recent first)
       _riderRides.sort((a, b) => b.requestedAt.compareTo(a.requestedAt));
@@ -218,14 +220,16 @@ class RideProvider extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      final snapshot = await _firestore
-          .collection('rides')
-          .where('driverId', isEqualTo: driverId)
-          .get();
+      final snapshot =
+          await _firestore
+              .collection('rides')
+              .where('driverId', isEqualTo: driverId)
+              .get();
 
-      _driverRides = snapshot.docs
-          .map((doc) => RideModel.fromJson({'id': doc.id, ...doc.data()}))
-          .toList();
+      _driverRides =
+          snapshot.docs
+              .map((doc) => RideModel.fromJson({'id': doc.id, ...doc.data()}))
+              .toList();
 
       // Sort by requestedAt in memory (most recent first)
       _driverRides.sort((a, b) => b.requestedAt.compareTo(a.requestedAt));
@@ -250,20 +254,21 @@ class RideProvider extends ChangeNotifier {
           print(
             'Available rides snapshot: ${snapshot.docs.length} rides found',
           );
-          _availableRides = snapshot.docs
-              .map((doc) {
-                try {
-                  final data = doc.data();
-                  print('Processing ride: ${doc.id} with data: $data');
-                  return RideModel.fromJson({'id': doc.id, ...data});
-                } catch (e) {
-                  print('Error parsing ride ${doc.id}: $e');
-                  return null;
-                }
-              })
-              .where((ride) => ride != null)
-              .cast<RideModel>()
-              .toList();
+          _availableRides =
+              snapshot.docs
+                  .map((doc) {
+                    try {
+                      final data = doc.data();
+                      print('Processing ride: ${doc.id} with data: $data');
+                      return RideModel.fromJson({'id': doc.id, ...data});
+                    } catch (e) {
+                      print('Error parsing ride ${doc.id}: $e');
+                      return null;
+                    }
+                  })
+                  .where((ride) => ride != null)
+                  .cast<RideModel>()
+                  .toList();
 
           // Sort by requestedAt in memory (most recent first)
           _availableRides.sort(
@@ -295,9 +300,13 @@ class RideProvider extends ChangeNotifier {
         .map((snapshot) {
           if (snapshot.docs.isNotEmpty) {
             // Sort in memory and get the most recent one
-            final rides = snapshot.docs
-                .map((doc) => RideModel.fromJson({'id': doc.id, ...doc.data()}))
-                .toList();
+            final rides =
+                snapshot.docs
+                    .map(
+                      (doc) =>
+                          RideModel.fromJson({'id': doc.id, ...doc.data()}),
+                    )
+                    .toList();
             rides.sort((a, b) => b.requestedAt.compareTo(a.requestedAt));
             _currentRide = rides.first;
             notifyListeners();
@@ -328,9 +337,13 @@ class RideProvider extends ChangeNotifier {
         .map((snapshot) {
           if (snapshot.docs.isNotEmpty) {
             // Sort in memory and get the most recent one
-            final rides = snapshot.docs
-                .map((doc) => RideModel.fromJson({'id': doc.id, ...doc.data()}))
-                .toList();
+            final rides =
+                snapshot.docs
+                    .map(
+                      (doc) =>
+                          RideModel.fromJson({'id': doc.id, ...doc.data()}),
+                    )
+                    .toList();
             rides.sort((a, b) => b.requestedAt.compareTo(a.requestedAt));
             _currentRide = rides.first;
             notifyListeners();
@@ -455,5 +468,55 @@ class RideProvider extends ChangeNotifier {
     } catch (e) {
       print('Error cleaning up test rides: $e');
     }
+  }
+
+  // Update driver location for active ride
+  Future<bool> updateDriverLocation(
+    String rideId,
+    LatLng driverLocation,
+  ) async {
+    try {
+      await _firestore.collection('rides').doc(rideId).update({
+        'driverLocation': {
+          'latitude': driverLocation.latitude,
+          'longitude': driverLocation.longitude,
+        },
+        'lastLocationUpdate': DateTime.now().toIso8601String(),
+      });
+
+      // Update local current ride if it matches
+      if (_currentRide?.id == rideId) {
+        _currentRide = _currentRide!.copyWith(
+          driverLocation: driverLocation,
+          lastLocationUpdate: DateTime.now(),
+        );
+        notifyListeners();
+      }
+
+      return true;
+    } catch (e) {
+      _errorMessage = 'Failed to update driver location: $e';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // Get driver location stream for active ride
+  Stream<LatLng?> getDriverLocationStream(String rideId) {
+    return _firestore.collection('rides').doc(rideId).snapshots().map((
+      snapshot,
+    ) {
+      if (snapshot.exists) {
+        final data = snapshot.data()!;
+        final driverLocation = data['driverLocation'];
+        if (driverLocation != null) {
+          return LatLng(
+            driverLocation['latitude'],
+            driverLocation['longitude'],
+          );
+        }
+      }
+      return null;
+    });
   }
 }
