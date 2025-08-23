@@ -13,7 +13,7 @@ class SimpleAuthManager {
     return digest.toString();
   }
 
-  // Simple username-based sign up
+ 
   static Future<Map<String, dynamic>> signUp({
     required String username,
     required String email,
