@@ -23,7 +23,7 @@ class SimpleAuthManager {
     required String userType,
   }) async {
     try {
-      // Check if username already exists
+     
       final existingUser = await _firestore
           .collection('users')
           .where('additionalInfo.username', isEqualTo: username)
