@@ -9,7 +9,7 @@ import '../../providers/simple_auth_provider.dart';
 import '../../providers/location_provider.dart';
 import '../../providers/ride_provider.dart';
 import '../../utils/app_colors.dart';
-// ignore: unused_import
+
 import '../../widgets/custom_button.dart';
 import '../../models/ride_model.dart';
 
