@@ -50,7 +50,6 @@ class SimpleAuthManager {
         };
       }
 
-      // Create user document
       final userId = _firestore.collection('users').doc().id;
       final hashedPassword = _hashPassword(password);
 
